@@ -4,38 +4,8 @@ basswood_dimentions = 1;
 lower_arc_diameter = 250;
 
 // The lower arc of the bridge
-arc(basswood_dimentions * 10, basswood_dimentions * 5, /*lower_arc_diameter/2*/20, 180);
+arc(basswood_dimentions * 10, basswood_dimentions * 5, /*lower_arc_diameter/2*/70, 180);
 
-
-// This measures an arc of (10,5,125,180) to have a height of 105 
-// An arc of (10,5,40,180) has a height of ~30
-cube_height = 10;
-rotate([0,0,180]) {
-    translate([0,-5,0])
-        cube(cube_height,cube_height,cube_height);
-    translate([cube_height,-5,0])
-        cube(cube_height,cube_height,cube_height);
-    translate([cube_height*2,-5,0])
-        cube(cube_height,cube_height,cube_height);
-    //translate([cube_height*3,-5,0])
-      //  cube(cube_height,cube_height,cube_height);
-    //translate([cube_height*4,-5,0])
-      //  cube(cube_height,cube_height,cube_height);
-    //translate([cube_height*5,-5,0])
-      //  cube(cube_height,cube_height,cube_height);
-    //translate([cube_height*6,-5,0])
-      //  cube(cube_height,cube_height,cube_height);
-    //translate([cube_height*7,-5,0])
-      //  cube(cube_height,cube_height,cube_height);
-    //translate([cube_height*8,-5,0])
-        //cube(cube_height,cube_height,cube_height);
-    //translate([cube_height*9,-5,0])
-        //cube(cube_height,cube_height,cube_height);
-    //translate([cube_height*10,-5,0])
-      //  cube(cube_height,cube_height,cube_height);
-    //translate([cube_height*11,-5,0])
-        //cube(cube_height,cube_height,cube_height);
-}
 /* 
  * Excerpt from... 
  * 
@@ -45,10 +15,11 @@ rotate([0,0,180]) {
  * http://www.theFrankes.com
  * 
  * Licenced under Creative Commons Attribution - Non-Commercial - Share Alike 3.0 
- * Height = X-Axis width of arc
+ * Height = X-Axis width (thickness) of arc
  * Depth = The Z-Axis value of the arc
  * Radius = Half of the Y-Axis value for the length of this arch
  * Degrees = How many degrees of the arch to make (180 = full arch, 90 = half an arch)
+ * The height (distance from [0,0,0] to the bottom of the arches center) = radius-10
  */
 module arc( height, depth, radius, degrees ) {
     // This dies a horible death if it's not rendered here 
@@ -71,4 +42,22 @@ module arc( height, depth, radius, degrees ) {
          
         }
     }
+}
+
+/*
+ * Module to measure the distance between two points 
+ * 
+ * by nophead, Febuary 11 2013, on the OpenSCAD forum
+ * http://forum.openscad.org/Measurement-tool-td3821.html
+ */
+module cylinder_ep(p1, p2) {
+	vector = [p2[0] - p1[0],p2[1] - p1[1],p2[2] - p1[2]];
+	distance = sqrt(pow(vector[0], 2) +	pow(vector[1], 2) +	pow(vector[2], 2));
+	echo(distance);
+	translate(vector/2 + p1)
+	//rotation of XoY plane by the Z axis with the angle of the [p1 p2] line projection with the X axis on the XoY plane
+	rotate([0, 0, atan2(vector[1], vector[0])]) //rotation
+	//rotation of ZoX plane by the y axis with the angle given by the z coordinate and the sqrt(x^2 + y^2)) point in the XoY plane
+	rotate([0, atan2(sqrt(pow(vector[0], 2)+pow(vector[1], 2)),vector[2]), 0])
+	cylinder(h = distance, r = 0.1, center = true);
 }
